@@ -2,7 +2,7 @@
   "id": "./",
   "name": "My Reta Journey",
   "short_name": "MRJ",
-  "description": "A private one-person progress tracker for your Reta journey.",
+  "description": "A private one-person progress tracker with autosave, blood pressure, intake, exercise and progress history.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -22,6 +22,30 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Entry",
+      "short_name": "New Entry",
+      "url": "./#entryCard",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "History",
+      "short_name": "History",
+      "url": "./#historyCard",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

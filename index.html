@@ -25,12 +25,32 @@ button,.fakebtn{border:0;border-radius:9px;padding:10px 13px;font-weight:bold;cu
 .total{font-weight:bold;color:var(--accent2);margin:7px 0}.muted{font-size:12px;color:var(--muted)}.hidden{display:none!important}
 .entry{border:1px solid var(--line);border-radius:10px;margin:9px 0;overflow:hidden}.entryHead{padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}.entryBody{display:none;padding:0 12px 12px}.entry.open .entryBody{display:block}.entryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;font-size:13px}.section{grid-column:1/-1;font-weight:bold;color:var(--accent2);border-top:1px dashed var(--line);padding-top:6px;margin-top:4px}
 canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10px;background:#fff}.profileName{font-weight:bold}.bar{height:14px;background:#e5e9ec;border-radius:999px;overflow:hidden}.bar>div{height:100%;background:var(--accent)}
+
+.autosave{font-size:12px;color:#d9f3ee;margin-left:6px}
+.installHelp{background:#e8f7f4;color:#174f45}
+.updateReady{background:#0b7a66;color:#fff}
+.bpGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bpCard{background:#f7fafb;border:1px solid var(--line);padding:10px;border-radius:10px;text-align:center}
+.bpCard b{display:block;font-size:18px}
+.modalBackdrop{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal{background:#fff;color:var(--text);max-width:520px;width:100%;border-radius:16px;padding:18px;box-shadow:0 20px 60px #0005}
+.modal h2{margin-top:0}
+.badge{display:inline-block;border-radius:999px;padding:5px 9px;background:var(--soft);font-size:12px;font-weight:bold}
+@media(max-width:700px){.bpGrid{grid-template-columns:repeat(3,1fr)}}
+
 #toast{position:fixed;right:15px;bottom:15px;background:#263238;color:#fff;padding:11px 14px;border-radius:9px;display:none;z-index:20}
 @media(max-width:700px){.grid,.stats,.entryGrid{grid-template-columns:1fr}header{position:static}}
 </style>
 </head>
 <body>
-<header><h1>My Reta Journey</h1><p id="headerSub">Your personal progress tracker</p><div class="actions" style="margin-top:10px"><button id="installApp" class="secondary hidden" type="button">Install App</button><span id="connectionStatus" class="muted" style="color:#d9f3ee">Online</span></div></header>
+<header><h1>My Reta Journey</h1><p id="headerSub">Your personal progress tracker</p>
+<div class="actions" style="margin-top:10px">
+<button id="installApp" class="secondary hidden" type="button">Install App</button>
+<button id="iosInstallHelp" class="installHelp hidden" type="button">Install on iPhone</button>
+<button id="checkUpdate" class="secondary" type="button">Check for Update</button>
+<span id="connectionStatus" class="muted" style="color:#d9f3ee">Online</span>
+<span id="autosaveStatus" class="autosave">Draft protected</span>
+</div></header>
 <main>
 
 <section id="profileSetup" class="card hidden">
@@ -47,9 +67,18 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <section id="dashboard" class="card">
 <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h2>Dashboard</h2><div id="welcome" class="profileName"></div></div><button class="secondary" id="editProfile">Edit Profile</button></div>
 <div class="stats">
-<div class="stat"><small>Current Weight</small><b id="dCurrent">—</b></div><div class="stat"><small>Total Change</small><b id="dChange">—</b></div>
-<div class="stat"><small>Goal Remaining</small><b id="dRemaining">—</b></div><div class="stat"><small>Last Reta</small><b id="dReta">—</b></div>
+<div class="stat"><small>Current Weight</small><b id="dCurrent">—</b></div>
+<div class="stat"><small>Total Change</small><b id="dChange">—</b></div>
+<div class="stat"><small>Goal Remaining</small><b id="dRemaining">—</b></div>
+<div class="stat"><small>Last Reta</small><b id="dReta">—</b></div>
 </div>
+<div style="margin-top:10px">
+<div class="badge">Latest Blood Pressure</div>
+<div class="bpGrid" style="margin-top:7px">
+<div class="bpCard"><small>SYS</small><b id="dSys">—</b></div>
+<div class="bpCard"><small>DIA</small><b id="dDia">—</b></div>
+<div class="bpCard"><small>PUL</small><b id="dPul">—</b></div>
+</div></div>
 <div style="margin-top:12px"><small>Goal progress</small><div class="bar"><div id="goalBar" style="width:0%"></div></div><div id="goalText" class="muted"></div></div>
 <div class="actions"><button class="primary" onclick="scrollToForm()">NEW ENTRY</button><button class="secondary" onclick="showProgress(7,'Weekly')">WEEKLY PROGRESS</button><button class="secondary" onclick="showProgress(30,'Monthly')">MONTHLY PROGRESS</button><button class="secondary" onclick="document.getElementById('historyCard').scrollIntoView({behavior:'smooth'})">HISTORY</button></div>
 </section>
@@ -58,16 +87,39 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <h2 id="formTitle">New Daily Entry</h2><form id="form"><input type="hidden" id="editingId">
 <div class="grid"><div><label>Date</label><input id="date" type="date" required></div><div><label>Weight (kg)</label><input id="weight" type="number" step=".01"></div><div><label>Reta Time</label><input id="retaTime" type="time"></div><div><label>Reta Dose (mg)</label><input id="retaDose" type="number" step=".1"></div></div>
 
+<h3>Blood Pressure</h3>
+<div class="bpGrid">
+<div><label>SYS</label><input id="bpSys" type="number" inputmode="numeric" placeholder="e.g. 120"></div>
+<div><label>DIA</label><input id="bpDia" type="number" inputmode="numeric" placeholder="e.g. 80"></div>
+<div><label>PUL</label><input id="bpPul" type="number" inputmode="numeric" placeholder="e.g. 72"></div>
+</div>
+
 <h3>Fluids</h3>
 <div class="grid">
 <div><label>Water</label><div class="taps"><button type="button" class="tap" data-target="water" data-v="200">200</button><button type="button" class="tap" data-target="water" data-v="300">300</button><button type="button" class="tap" data-target="water" data-v="400">400</button><button type="button" class="tap" data-target="water" data-v="500">500</button><button type="button" class="secondary undo" data-target="water">Undo</button></div><input id="water"><div class="total" id="waterTotal">Total: 0 ml</div></div>
+
 <div><label>Electrolytes</label><div class="taps"><button type="button" class="tap" data-target="electrolytes" data-v="200">200</button><button type="button" class="tap" data-target="electrolytes" data-v="300">300</button><button type="button" class="tap" data-target="electrolytes" data-v="400">400</button><button type="button" class="tap" data-target="electrolytes" data-v="500">500</button><button type="button" class="secondary undo" data-target="electrolytes">Undo</button></div><input id="electrolytes"><div class="total" id="electrolytesTotal">Total: 0 ml</div></div>
+
 <div><label>Protein</label><div class="taps"><button type="button" class="tap" data-target="protein" data-v="10">10 g</button><button type="button" class="tap" data-target="protein" data-v="20">20 g</button><button type="button" class="tap" data-target="protein" data-v="30">30 g</button><button type="button" class="secondary undo" data-target="protein">Undo</button></div><input id="protein"><div class="total" id="proteinTotal">Total: 0 g</div></div>
-<div><label>Juice</label><input id="juice"></div><div><label>Fizzy</label><input id="fizzy"></div><div><label>Milk</label><input id="milk"></div>
+
+<div><label>Juice</label><div class="taps"><button type="button" class="tap" data-target="juice" data-v="150">150</button><button type="button" class="tap" data-target="juice" data-v="200">200</button><button type="button" class="tap" data-target="juice" data-v="250">250</button><button type="button" class="secondary undo" data-target="juice">Undo</button></div><input id="juice"><div class="total" id="juiceTotal">Total: 0 ml</div></div>
+
+<div><label>Fizzy</label><div class="taps"><button type="button" class="tap" data-target="fizzy" data-v="150">150</button><button type="button" class="tap" data-target="fizzy" data-v="200">200</button><button type="button" class="tap" data-target="fizzy" data-v="250">250</button><button type="button" class="tap" data-target="fizzy" data-v="330">330</button><button type="button" class="secondary undo" data-target="fizzy">Undo</button></div><input id="fizzy"><div class="total" id="fizzyTotal">Total: 0 ml</div></div>
+
+<div class="full"><label>Beverages</label>
+<div class="taps">
+<button type="button" class="categoryTap" data-target="beverages" data-v="Coffee">Coffee</button>
+<button type="button" class="categoryTap" data-target="beverages" data-v="Tea">Tea</button>
+<button type="button" class="categoryTap" data-target="beverages" data-v="Soup">Soup</button>
+<button type="button" class="categoryTap" data-target="beverages" data-v="Noodles">Noodles</button>
+<button type="button" class="secondary undo" data-target="beverages">Undo</button>
+</div><input id="beverages" placeholder="Tap items or edit manually"></div>
 </div>
 
 <h3>Meals</h3><div class="grid"><div class="full"><label>Breakfast</label><textarea id="breakfast"></textarea></div><div class="full"><label>Lunch</label><textarea id="lunch"></textarea></div><div class="full"><label>Tea</label><textarea id="tea"></textarea></div></div>
-<h3>Exercise</h3><div class="grid"><div><label>Walk</label><input id="walk"></div><div><label>Gym</label><input id="gym"></div><div class="full"><label>Other</label><input id="exerciseOther"></div></div>
+<h3>Exercise</h3><div class="grid">
+<div><label>Walk</label><div class="taps"><button type="button" class="tap" data-target="walk" data-v="10">10 min</button><button type="button" class="tap" data-target="walk" data-v="20">20 min</button><button type="button" class="tap" data-target="walk" data-v="30">30 min</button><button type="button" class="tap" data-target="walk" data-v="40">40 min</button><button type="button" class="tap" data-target="walk" data-v="60">60 min</button><button type="button" class="secondary undo" data-target="walk">Undo</button></div><input id="walk"><div class="total" id="walkTotal">Total: 0 min</div></div>
+<div><label>Gym</label><input id="gym"></div><div class="full"><label>Other</label><input id="exerciseOther"></div></div>
 
 <h3>Supplements</h3><div class="grid">
 <div><label>Magnesium Glycinate</label><div class="taps"><button type="button" class="tap" data-target="magnesium" data-v="400">400 mg</button><button type="button" class="tap" data-target="magnesium" data-v="500">500 mg</button><button type="button" class="secondary undo" data-target="magnesium">Undo</button></div><input id="magnesium"></div>
@@ -79,7 +131,7 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <div><label>Appetite</label><div class="choice"><input type="radio" name="appetite" id="ar" value="Reduced"><label for="ar">Reduced</label><input type="radio" name="appetite" id="an" value="Normal"><label for="an">Normal</label></div></div>
 <div class="full"><label>Symptoms</label><textarea id="symptoms"></textarea></div><div class="full"><label>Observations</label><textarea id="observations"></textarea></div><div class="full"><label>Other</label><textarea id="notesOther"></textarea></div>
 </div>
-<div class="actions"><button class="primary" type="submit" id="saveBtn">Save Entry</button><button class="secondary" type="button" id="clearForm">Clear</button><button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button></div>
+<div class="actions"><button class="primary" type="submit" id="saveBtn">Save Entry</button><button class="secondary" type="button" id="saveClose">SAVE & CLOSE</button><button class="secondary" type="button" id="clearForm">Clear</button><button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button></div><div class="muted">Your current entry is also protected automatically as a draft whenever you type, switch apps, or close the app.</div>
 </form>
 </section>
 
@@ -92,7 +144,7 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </main><div id="toast"></div>
 
 <script>
-const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons';
+const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.1';
 let entries=JSON.parse(localStorage.getItem(KEY)||'[]'),profile=JSON.parse(localStorage.getItem(PROFILE)||'null'),deleted=null;
 const $=id=>document.getElementById(id), val=id=>$(id).value.trim();
 function today(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
@@ -116,20 +168,65 @@ $('editProfile').onclick=()=>{if(!profile)return;$('pFirst').value=profile.first
 $('pDob').oninput=function(){let d=this.value.replace(/\D/g,'').slice(0,8);this.value=d.length>=5?d.slice(0,2)+'/'+d.slice(2,4)+'/'+d.slice(4):d.length>=3?d.slice(0,2)+'/'+d.slice(2):d}
 
 $('date').value=today();
-document.querySelectorAll('.tap').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target);x.value=x.value.trim()?x.value.trim()+', '+b.dataset.v:b.dataset.v;updateTotals()});
-document.querySelectorAll('.undo').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target),a=x.value.split(',').map(s=>s.trim()).filter(Boolean);a.pop();x.value=a.join(', ');updateTotals()});
-['water','electrolytes','protein'].forEach(id=>$(id).oninput=updateTotals);
-function updateTotals(){$('waterTotal').textContent='Total: '+sum(val('water'))+' ml';$('electrolytesTotal').textContent='Total: '+sum(val('electrolytes'))+' ml';$('proteinTotal').textContent='Total: '+sum(val('protein'))+' g'}
+document.querySelectorAll('.tap').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target);x.value=x.value.trim()?x.value.trim()+', '+b.dataset.v:b.dataset.v;updateTotals();saveDraft()});
+document.querySelectorAll('.undo').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target),a=x.value.split(',').map(s=>s.trim()).filter(Boolean);a.pop();x.value=a.join(', ');updateTotals();saveDraft()});
+document.querySelectorAll('.categoryTap').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target);x.value=x.value.trim()?x.value.trim()+', '+b.dataset.v:b.dataset.v;saveDraft()});
+['water','electrolytes','protein','juice','fizzy','walk'].forEach(id=>$(id).oninput=()=>{updateTotals();saveDraft();});
+function updateTotals(){
+$('waterTotal').textContent='Total: '+sum(val('water'))+' ml';
+$('electrolytesTotal').textContent='Total: '+sum(val('electrolytes'))+' ml';
+$('proteinTotal').textContent='Total: '+sum(val('protein'))+' g';
+$('juiceTotal').textContent='Total: '+sum(val('juice'))+' ml';
+$('fizzyTotal').textContent='Total: '+sum(val('fizzy'))+' ml';
+$('walkTotal').textContent='Total: '+sum(val('walk'))+' min';
+}
 
 function suppButtons(){let a=JSON.parse(localStorage.getItem(SUPPS)||'[]');$('customSupplementButtons').innerHTML=a.map((s,i)=>`<button type="button" class="tap" onclick="addCustom(${i})">${esc(s)}</button>`).join('');window._supps=a}
 $('addSupplement').onclick=()=>{let s=val('newSupplement');if(!s)return;let a=JSON.parse(localStorage.getItem(SUPPS)||'[]');a.push(s);localStorage.setItem(SUPPS,JSON.stringify(a));$('newSupplement').value='';suppButtons()}
 window.addCustom=i=>{let s=window._supps[i],x=$('supplementOther');x.value=x.value?x.value+', '+s:s}
 
-function item(){return{id:Number(val('editingId'))||Date.now(),date:val('date'),weight:val('weight'),retaTime:val('retaTime'),retaDose:val('retaDose'),water:val('water'),electrolytes:val('electrolytes'),protein:val('protein'),juice:val('juice'),fizzy:val('fizzy'),milk:val('milk'),breakfast:val('breakfast'),lunch:val('lunch'),tea:val('tea'),walk:val('walk'),gym:val('gym'),exerciseOther:val('exerciseOther'),magnesium:val('magnesium'),supplementOther:val('supplementOther'),energy:radio('energy'),appetite:radio('appetite'),symptoms:val('symptoms'),observations:val('observations'),notesOther:val('notesOther')}}
-$('form').onsubmit=e=>{e.preventDefault();let x=item(),editing=!!val('editingId');if(editing){let i=entries.findIndex(e=>e.id===x.id);if(i>=0)entries[i]=x}else entries.push(x);entries.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);save();clearEntry();toast(editing?'Edits saved':'Entry saved')}
+function item(){return{id:Number(val('editingId'))||Date.now(),date:val('date'),weight:val('weight'),retaTime:val('retaTime'),retaDose:val('retaDose'),bpSys:val('bpSys'),bpDia:val('bpDia'),bpPul:val('bpPul'),water:val('water'),electrolytes:val('electrolytes'),protein:val('protein'),juice:val('juice'),fizzy:val('fizzy'),beverages:val('beverages'),breakfast:val('breakfast'),lunch:val('lunch'),tea:val('tea'),walk:val('walk'),gym:val('gym'),exerciseOther:val('exerciseOther'),magnesium:val('magnesium'),supplementOther:val('supplementOther'),energy:radio('energy'),appetite:radio('appetite'),symptoms:val('symptoms'),observations:val('observations'),notesOther:val('notesOther')}}
+
+function draftData(){
+  const x=item(); x.id=val('editingId')||''; x._savedAt=new Date().toISOString(); return x;
+}
+function saveDraft(){
+  if(!profile) return;
+  localStorage.setItem(DRAFT,JSON.stringify(draftData()));
+  const s=$('autosaveStatus'); if(s) s.textContent='Draft saved '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+function clearDraft(){localStorage.removeItem(DRAFT)}
+function restoreDraft(){
+  const raw=localStorage.getItem(DRAFT); if(!raw)return;
+  try{
+    const d=JSON.parse(raw);
+    const hasContent=Object.entries(d).some(([k,v])=>!['id','_savedAt','date'].includes(k)&&String(v||'').trim());
+    if(!hasContent)return;
+    Object.keys(d).forEach(k=>{if($(k))$(k).value=d[k]??''});
+    setRadio('energy',d.energy||''); setRadio('appetite',d.appetite||'');
+    if(d.id){$('editingId').value=d.id;$('formTitle').textContent='Edit Entry';$('saveBtn').textContent='Save Edits';$('cancelEdit').classList.remove('hidden')}
+    updateTotals();
+    toast('Your autosaved draft was restored');
+  }catch(e){}
+}
+document.querySelectorAll('#form input,#form textarea,#form select').forEach(el=>{
+  el.addEventListener('input',saveDraft); el.addEventListener('change',saveDraft);
+});
+window.addEventListener('pagehide',saveDraft);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveDraft()});
+
+$('form').onsubmit=e=>{e.preventDefault();let x=item(),editing=!!val('editingId');if(editing){let i=entries.findIndex(e=>e.id===x.id);if(i>=0)entries[i]=x}else entries.push(x);entries.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);save();clearDraft();clearEntry();toast(editing?'Edits saved':'Entry saved')}
 function clearEntry(){let d=val('date')||today();$('form').reset();$('date').value=d;$('editingId').value='';$('formTitle').textContent='New Daily Entry';$('saveBtn').textContent='Save Entry';$('cancelEdit').classList.add('hidden');updateTotals();window.scrollTo({top:0,behavior:'smooth'})}
-$('clearForm').onclick=()=>{let d=val('date');$('form').reset();$('date').value=d;updateTotals()}
+$('clearForm').onclick=()=>{let d=val('date');$('form').reset();$('date').value=d;clearDraft();updateTotals();saveDraft()}
 $('cancelEdit').onclick=clearEntry;
+$('saveClose').onclick=()=>{
+  saveDraft();
+  toast('Draft saved safely');
+  setTimeout(()=>{
+    try{window.close()}catch(e){}
+    if(!document.hidden) alert('Your entry has been saved automatically. You can now close or swipe away My Reta Journey safely.');
+  },250);
+};
 
 window.editEntry=id=>{let e=entries.find(x=>x.id===id);if(!e)return;Object.keys(e).forEach(k=>{if($(k))$(k).value=e[k]??''});setRadio('energy',e.energy);setRadio('appetite',e.appetite);$('editingId').value=e.id;$('formTitle').textContent='Edit Entry';$('saveBtn').textContent='Save Edits';$('cancelEdit').classList.remove('hidden');updateTotals();scrollToForm()}
 window.delEntry=id=>{let i=entries.findIndex(x=>x.id===id);if(i<0)return;if(confirm('Delete this entry?')){deleted=[entries[i]];entries.splice(i,1);save();toast('Deleted — you can restore it')}}
@@ -138,30 +235,74 @@ $('deleteAll').onclick=()=>{if(confirm('Delete ALL entries?')){deleted=[...entri
 
 function dashboard(){if(!profile)return;let asc=[...entries].sort((a,b)=>a.date.localeCompare(b.date)),w=asc.filter(e=>e.weight),cur=w.length?Number(w.at(-1).weight):profile.start;let change=cur!=null&&profile.start!=null?cur-profile.start:null,rem=cur!=null&&profile.goal!=null?cur-profile.goal:null,lastR=[...entries].find(e=>e.retaDose);
 $('dCurrent').textContent=cur!=null?cur.toFixed(2)+' kg':'—';$('dChange').textContent=change!=null?(change>0?'+':'')+change.toFixed(2)+' kg':'—';$('dRemaining').textContent=rem!=null?Math.abs(rem).toFixed(2)+' kg':'—';$('dReta').textContent=lastR?lastR.retaDose+' mg':'—';
+let lastBP=[...entries].find(e=>e.bpSys||e.bpDia||e.bpPul);
+$('dSys').textContent=lastBP&&lastBP.bpSys?lastBP.bpSys:'—';$('dDia').textContent=lastBP&&lastBP.bpDia?lastBP.bpDia:'—';$('dPul').textContent=lastBP&&lastBP.bpPul?lastBP.bpPul:'—';
 let pct=0;if(profile.start!=null&&profile.goal!=null&&cur!=null&&profile.start!==profile.goal)pct=Math.max(0,Math.min(100,((profile.start-cur)/(profile.start-profile.goal))*100));$('goalBar').style.width=pct+'%';$('goalText').textContent=Math.round(pct)+'% toward goal'}
 
 function range(n){let c=new Date();c.setDate(c.getDate()-n+1);c.setHours(0,0,0,0);return n>1000?entries:entries.filter(e=>new Date(e.date+'T00:00:00')>=c)}
 window.showProgress=(n,label)=>{let a=range(n).sort((x,y)=>x.date.localeCompare(y.date)),w=a.filter(e=>e.weight).map(e=>Number(e.weight)),chg=w.length>1?w.at(-1)-w[0]:null,days=a.length||1;
 let energy={Good:0,Low:0,High:0},app={Reduced:0,Normal:0};a.forEach(e=>{if(energy[e.energy]!=null)energy[e.energy]++;if(app[e.appetite]!=null)app[e.appetite]++});
-$('progress').innerHTML=`<h3>${label} Progress</h3><div class="stats"><div class="stat"><small>Weight Change</small><b>${chg==null?'—':(chg>0?'+':'')+chg.toFixed(2)+' kg'}</b></div><div class="stat"><small>Avg Water / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.water),0)/days)} ml</b></div><div class="stat"><small>Avg Protein / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.protein),0)/days)} g</b></div><div class="stat"><small>Exercise Days</small><b>${a.filter(e=>e.walk||e.gym||e.exerciseOther).length}</b></div></div><p class="muted">Reta doses: ${a.filter(e=>e.retaDose).length} &nbsp; | &nbsp; Energy — Good ${energy.Good}, Low ${energy.Low}, High ${energy.High} &nbsp; | &nbsp; Appetite — Reduced ${app.Reduced}, Normal ${app.Normal}</p>`;drawChart(a)}
+let bp=a.filter(e=>e.bpSys&&e.bpDia);let avgSys=bp.length?Math.round(bp.reduce((s,e)=>s+Number(e.bpSys),0)/bp.length):null,avgDia=bp.length?Math.round(bp.reduce((s,e)=>s+Number(e.bpDia),0)/bp.length):null,avgPul=bp.filter(e=>e.bpPul).length?Math.round(bp.filter(e=>e.bpPul).reduce((s,e)=>s+Number(e.bpPul),0)/bp.filter(e=>e.bpPul).length):null;
+$('progress').innerHTML=`<h3>${label} Progress</h3><div class="stats"><div class="stat"><small>Weight Change</small><b>${chg==null?'—':(chg>0?'+':'')+chg.toFixed(2)+' kg'}</b></div><div class="stat"><small>Avg Water / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.water),0)/days)} ml</b></div><div class="stat"><small>Avg Protein / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.protein),0)/days)} g</b></div><div class="stat"><small>Walk Total</small><b>${a.reduce((s,e)=>s+sum(e.walk),0)} min</b></div></div><p class="muted"><strong>Blood pressure average:</strong> ${avgSys??'—'}/${avgDia??'—'} &nbsp; Pulse ${avgPul??'—'} &nbsp; | &nbsp; Juice ${a.reduce((s,e)=>s+sum(e.juice),0)} ml &nbsp; | &nbsp; Fizzy ${a.reduce((s,e)=>s+sum(e.fizzy),0)} ml<br>Reta doses: ${a.filter(e=>e.retaDose).length} &nbsp; | &nbsp; Energy — Good ${energy.Good}, Low ${energy.Low}, High ${energy.High} &nbsp; | &nbsp; Appetite — Reduced ${app.Reduced}, Normal ${app.Normal}</p>`;drawChart(a)}
 function drawChart(a=entries){let c=$('chart'),ctx=c.getContext('2d'),d=[...a].filter(e=>e.weight).sort((x,y)=>x.date.localeCompare(y.date));ctx.clearRect(0,0,c.width,c.height);if(d.length<1){ctx.fillText('Add weight entries to display your graph.',30,40);return}let ys=d.map(e=>Number(e.weight)),min=Math.min(...ys)-1,max=Math.max(...ys)+1,pad=40;ctx.beginPath();d.forEach((e,i)=>{let x=pad+(i*(c.width-2*pad)/Math.max(1,d.length-1)),y=c.height-pad-((Number(e.weight)-min)/(max-min))*(c.height-2*pad);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillText(max.toFixed(1)+' kg',5,pad);ctx.fillText(min.toFixed(1)+' kg',5,c.height-pad)}
 
 function filtered(){let a=[...entries],f=val('filter'),q=val('search').toLowerCase();if(f!=='all')a=range(Number(f));if(q)a=a.filter(e=>Object.values(e).join(' ').toLowerCase().includes(q));return a}
 $('filter').onchange=render;$('search').oninput=render;$('toggleHistory').onclick=()=>{$('historyWrap').classList.toggle('hidden');$('toggleHistory').textContent=$('historyWrap').classList.contains('hidden')?'Expand':'Collapse'}
-function render(){dashboard();let a=filtered(),h=$('history');h.innerHTML=a.length?a.map(e=>`<div class="entry" id="en${e.id}"><div class="entryHead" onclick="document.getElementById('en${e.id}').classList.toggle('open')"><strong>${esc(e.date)} | ${e.weight?esc(e.weight)+' kg':'No weight'} | ${e.retaDose?'Reta '+esc(e.retaDose)+' mg':'No Reta'}</strong><span>▼</span></div><div class="entryBody"><div class="entryGrid"><div class="section">Fluids</div><div>Water: ${esc(e.water)||'—'}</div><div>Electrolytes: ${esc(e.electrolytes)||'—'}</div><div>Protein: ${esc(e.protein)||'—'}</div><div class="section">Meals</div><div>Breakfast: ${esc(e.breakfast)||'—'}</div><div>Lunch: ${esc(e.lunch)||'—'}</div><div>Tea: ${esc(e.tea)||'—'}</div><div class="section">Exercise & Supplements</div><div>Walk: ${esc(e.walk)||'—'}</div><div>Gym: ${esc(e.gym)||'—'}</div><div>Magnesium: ${esc(e.magnesium)||'—'}</div><div>Other supplements: ${esc(e.supplementOther)||'—'}</div><div class="section">Notes</div><div>Energy: ${esc(e.energy)||'—'}</div><div>Appetite: ${esc(e.appetite)||'—'}</div><div>Symptoms: ${esc(e.symptoms)||'—'}</div><div>Observations: ${esc(e.observations)||'—'}</div></div><div class="actions"><button class="secondary" onclick="editEntry(${e.id})">EDIT</button><button class="danger" onclick="delEntry(${e.id})">DELETE</button></div></div></div>`).join(''):'<p class="muted">No entries found.</p>';drawChart(entries);$('backupStatus').textContent='Last backup: '+(localStorage.getItem(BACKUP)||'Never')}
+function render(){dashboard();let a=filtered(),h=$('history');h.innerHTML=a.length?a.map(e=>`<div class="entry" id="en${e.id}"><div class="entryHead" onclick="document.getElementById('en${e.id}').classList.toggle('open')"><strong>${esc(e.date)} | ${e.weight?esc(e.weight)+' kg':'No weight'} | ${e.retaDose?'Reta '+esc(e.retaDose)+' mg':'No Reta'}</strong><span>▼</span></div><div class="entryBody"><div class="entryGrid"><div class="section">Blood Pressure</div><div>SYS: ${esc(e.bpSys)||'—'}</div><div>DIA: ${esc(e.bpDia)||'—'}</div><div>PUL: ${esc(e.bpPul)||'—'}</div><div class="section">Fluids</div><div>Water: ${esc(e.water)||'—'}</div><div>Electrolytes: ${esc(e.electrolytes)||'—'}</div><div>Protein: ${esc(e.protein)||'—'}</div><div>Juice: ${esc(e.juice)||'—'}</div><div>Fizzy: ${esc(e.fizzy)||'—'}</div><div>Beverages: ${esc(e.beverages)||'—'}</div><div class="section">Meals</div><div>Breakfast: ${esc(e.breakfast)||'—'}</div><div>Lunch: ${esc(e.lunch)||'—'}</div><div>Tea: ${esc(e.tea)||'—'}</div><div class="section">Exercise & Supplements</div><div>Walk: ${esc(e.walk)||'—'}</div><div>Gym: ${esc(e.gym)||'—'}</div><div>Magnesium: ${esc(e.magnesium)||'—'}</div><div>Other supplements: ${esc(e.supplementOther)||'—'}</div><div class="section">Notes</div><div>Energy: ${esc(e.energy)||'—'}</div><div>Appetite: ${esc(e.appetite)||'—'}</div><div>Symptoms: ${esc(e.symptoms)||'—'}</div><div>Observations: ${esc(e.observations)||'—'}</div></div><div class="actions"><button class="secondary" onclick="editEntry(${e.id})">EDIT</button><button class="danger" onclick="delEntry(${e.id})">DELETE</button></div></div></div>`).join(''):'<p class="muted">No entries found.</p>';drawChart(entries);$('backupStatus').textContent='Last backup: '+(localStorage.getItem(BACKUP)||'Never')}
 
 function download(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 $('backup').onclick=()=>{download(new Blob([JSON.stringify({profile,entries,supplements:JSON.parse(localStorage.getItem(SUPPS)||'[]')},null,2)],{type:'application/json'}),'my-reta-journey-backup.json');let d=new Date().toLocaleString();localStorage.setItem(BACKUP,d);render()}
 $('restore').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(confirm('Replace current profile and data with this backup?')){profile=x.profile||profile;entries=x.entries||[];localStorage.setItem(PROFILE,JSON.stringify(profile));localStorage.setItem(KEY,JSON.stringify(entries));if(x.supplements)localStorage.setItem(SUPPS,JSON.stringify(x.supplements));profileUI();suppButtons();render()}}catch{alert('Could not read backup.')}e.target.value=''}
-$('csv').onclick=()=>{let cols=['date','weight','retaTime','retaDose','water','electrolytes','protein','juice','fizzy','milk','breakfast','lunch','tea','walk','gym','exerciseOther','magnesium','supplementOther','energy','appetite','symptoms','observations','notesOther'],q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',csv=[cols.join(','),...entries.map(e=>cols.map(c=>q(e[c])).join(','))].join('\n');download(new Blob([csv],{type:'text/csv'}),'my-reta-journey.csv')}
+$('csv').onclick=()=>{let cols=['date','weight','retaTime','retaDose','bpSys','bpDia','bpPul','water','electrolytes','protein','juice','fizzy','beverages','breakfast','lunch','tea','walk','gym','exerciseOther','magnesium','supplementOther','energy','appetite','symptoms','observations','notesOther'],q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',csv=[cols.join(','),...entries.map(e=>cols.map(c=>q(e[c])).join(','))].join('\n');download(new Blob([csv],{type:'text/csv'}),'my-reta-journey.csv')}
 
 profileUI();suppButtons();updateTotals();render();
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.error));}
-let deferredInstallPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;let b=document.getElementById('installApp');if(b)b.classList.remove('hidden');});
-document.getElementById('installApp')?.addEventListener('click',async()=>{if(!deferredInstallPrompt){alert('On iPhone/iPad use Share → Add to Home Screen. On Android use the browser menu → Install app / Add to Home screen.');return;}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;document.getElementById('installApp').classList.add('hidden');});
-function updateConnectionStatus(){let s=document.getElementById('connectionStatus');if(s)s.textContent=navigator.onLine?'Online':'Offline — app still available';}
+
+let swRegistration=null, deferredInstallPrompt=null;
+function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}
+function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true}
+function showModal(title,body){
+  const wrap=document.createElement('div');wrap.className='modalBackdrop';
+  wrap.innerHTML=`<div class="modal"><h2>${title}</h2>${body}<div class="actions"><button class="primary" id="modalClose">Got it</button></div></div>`;
+  document.body.appendChild(wrap);wrap.querySelector('#modalClose').onclick=()=>wrap.remove();
+}
+if(isIOS()&&!isStandalone()) $('iosInstallHelp').classList.remove('hidden');
+$('iosInstallHelp').onclick=()=>showModal('Install My Reta Journey on iPhone',`<p>Apple requires Home Screen installation through Safari.</p><ol><li>Open this page in <strong>Safari</strong>.</li><li>Tap the <strong>Share</strong> button.</li><li>Tap <strong>Add to Home Screen</strong>.</li><li>Tap <strong>Add</strong>.</li></ol><p class="muted">After installation, open the app from the MRJ icon on your Home Screen.</p>`);
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;let b=$('installApp');if(b)b.classList.remove('hidden')});
+$('installApp')?.addEventListener('click',async()=>{if(!deferredInstallPrompt){if(isIOS())$('iosInstallHelp').click();else alert('Use your browser menu → Install app / Add to Home screen.');return;}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installApp').classList.add('hidden')});
+
+function activateWaitingWorker(reg){
+  if(reg&&reg.waiting){reg.waiting.postMessage({type:'SKIP_WAITING'});return true}
+  return false;
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load',async()=>{
+    try{
+      swRegistration=await navigator.serviceWorker.register('./service-worker.js');
+      if(swRegistration.waiting){$('checkUpdate').textContent='UPDATE NOW';$('checkUpdate').classList.add('updateReady')}
+      swRegistration.addEventListener('updatefound',()=>{
+        const nw=swRegistration.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            $('checkUpdate').textContent='UPDATE NOW';$('checkUpdate').classList.add('updateReady');toast('New version ready');
+          }
+        });
+      });
+    }catch(e){console.error(e)}
+  });
+  navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());
+}
+$('checkUpdate').onclick=async()=>{
+  if(!swRegistration){toast('Update service is starting');return}
+  if(activateWaitingWorker(swRegistration))return;
+  $('checkUpdate').textContent='Checking…';
+  try{await swRegistration.update();setTimeout(()=>{if(swRegistration.waiting)activateWaitingWorker(swRegistration);else{$('checkUpdate').textContent='Up to date ✓';setTimeout(()=>$('checkUpdate').textContent='Check for Update',1800)}},600)}
+  catch(e){$('checkUpdate').textContent='Check for Update';toast('Could not check for update')}
+};
+function updateConnectionStatus(){let s=$('connectionStatus');if(s)s.textContent=navigator.onLine?'Online':'Offline — app still available'}
 window.addEventListener('online',updateConnectionStatus);window.addEventListener('offline',updateConnectionStatus);updateConnectionStatus();
 
+setTimeout(restoreDraft,300);
 </script></body></html>

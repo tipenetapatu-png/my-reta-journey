@@ -248,11 +248,11 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <div class="full"><label>Observations</label><textarea id="observations"></textarea></div>
 </div>
 <div class="actions">
-<button class="primary" type="button" id="saveClose">SAVE & HOME</button>
+<button class="primary" type="button" id="saveClose">SAVE / CLOSE</button>
 <button class="secondary" type="button" id="clearForm">Clear</button>
 <button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
 </div>
-<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE & HOME commits the entry to History and returns you to your profile dashboard.</div>
+<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE / CLOSE commits the entry to History and returns you to your profile dashboard.</div>
 </form>
 </section>
 
@@ -265,7 +265,7 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </main><div id="toast"></div>
 
 <script>
-const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.2';
+const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.3';
 let entries=JSON.parse(localStorage.getItem(KEY)||'[]'),profile=JSON.parse(localStorage.getItem(PROFILE)||'null'),deleted=null;
 
 function migrateLegacyEntries(){
@@ -493,7 +493,7 @@ $('saveClose').onclick=()=>{
   const x=commitCurrentEntry();
   if(!x){toast('Nothing to save');return;}
   localStorage.setItem('myRetaJourneyHomeMode','1');
-  toast('Entry saved for '+x.date);
+  toast('Entry saved for '+x.date+' — safe to close');
   window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>profileUI(),150);
 };

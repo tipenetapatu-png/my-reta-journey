@@ -248,11 +248,11 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <div class="full"><label>Observations</label><textarea id="observations"></textarea></div>
 </div>
 <div class="actions">
-<button class="primary" type="button" id="saveClose">SAVE & CLOSE</button>
+<button class="primary" type="button" id="saveClose">SAVE & HOME</button>
 <button class="secondary" type="button" id="clearForm">Clear</button>
 <button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
 </div>
-<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE & CLOSE commits the entry to History before you leave.</div>
+<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE & HOME commits the entry to History and returns you to your profile dashboard.</div>
 </form>
 </section>
 
@@ -265,7 +265,7 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </main><div id="toast"></div>
 
 <script>
-const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.1';
+const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.2';
 let entries=JSON.parse(localStorage.getItem(KEY)||'[]'),profile=JSON.parse(localStorage.getItem(PROFILE)||'null'),deleted=null;
 
 function migrateLegacyEntries(){
@@ -354,22 +354,67 @@ function loadDateEntry(dateStr){
   saveDraft();
 }
 
+function hasMeaningfulData(obj){
+  return !!obj && Object.entries(obj).some(([k,v])=>
+    !['id','_savedAt','date'].includes(k) && String(v??'').trim()!==''
+  );
+}
+
+function readDraft(){
+  const raw=localStorage.getItem(DRAFT);
+  if(!raw)return null;
+  try{return JSON.parse(raw)}catch(e){return null}
+}
+
+function commitObjectToHistory(x){
+  if(!x || !x.date || !hasMeaningfulData(x))return null;
+  x={...x};
+  delete x._savedAt;
+  if(!x.id)x.id=Date.now();
+
+  const byId=x.id?entries.findIndex(e=>e.id===Number(x.id)):-1;
+  const byDate=entries.findIndex(e=>e.date===x.date && Number(e.id)!==Number(x.id));
+
+  if(byId>=0){
+    entries[byId]=x;
+    if(byDate>=0)entries.splice(byDate,1);
+  }else if(byDate>=0){
+    x.id=entries[byDate].id;
+    entries[byDate]=x;
+  }else{
+    entries.push(x);
+  }
+  entries.sort((a,b)=>b.date.localeCompare(a.date)||Number(b.id)-Number(a.id));
+  localStorage.setItem(KEY,JSON.stringify(entries));
+  return x;
+}
+
 function loadTodayOnOpen(){
   const t=today();
+  const d=readDraft();
+
+  // If midnight has passed, preserve yesterday's meaningful draft before starting today.
+  if(d && d.date && d.date!==t && hasMeaningfulData(d)){
+    commitObjectToHistory(d);
+    clearDraft();
+  }
+
   $('date').value=t;
   const todays=entries.find(e=>e.date===t);
-  if(todays)populateForm(todays);
-  else {
+
+  // A current-day draft takes priority because it may contain newer work than History.
+  const currentDraft=readDraft();
+  if(currentDraft && currentDraft.date===t && hasMeaningfulData(currentDraft)){
+    if(todays)populateForm(todays);
+    else {clearFormFields(true);$('date').value=t;}
+    restoreDraft();
+  }else if(todays){
+    populateForm(todays);
+  }else{
     clearFormFields(true);
     $('date').value=t;
-    const raw=localStorage.getItem(DRAFT);
-    if(raw){
-      try{
-        const d=JSON.parse(raw);
-        if(d.date===t)restoreDraft();
-      }catch(e){}
-    }
   }
+  render();
 }
 
 function ensureCurrentDay(){
@@ -407,60 +452,50 @@ function restoreDraft(){
     toast('Your autosaved draft was restored');
   }catch(e){}
 }
-$('date').addEventListener('change',()=>loadDateEntry(val('date')));
+$('date').addEventListener('change',()=>{localStorage.removeItem('myRetaJourneyHomeMode');loadDateEntry(val('date'))});
 document.querySelectorAll('#form input,#form textarea,#form select').forEach(el=>{
+  el.addEventListener('focus',()=>localStorage.removeItem('myRetaJourneyHomeMode'));
   el.addEventListener('input',saveDraft); el.addEventListener('change',saveDraft);
 });
 window.addEventListener('pagehide',saveDraft);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)saveDraft()});
-
-$('clearForm').onclick=()=>{let d=val('date');$('form').reset();$('date').value=d;clearDraft();updateTotals();saveDraft()}
-$('cancelEdit').onclick=clearEntry;
-$('saveClose').onclick=()=>{
-  saveDraft();
-  toast('Draft saved safely');
-  setTimeout(()=>{
-    try{window.close()}catch(e){}
-    if(!document.hidden) alert('Your entry has been saved automatically. You can now close or swipe away My Reta Journey safely.');
-  },250);
-};
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    saveDraft();
+  }else{
+    loadTodayOnOpen();
+    if(localStorage.getItem('myRetaJourneyHomeMode')==='1'){
+      window.scrollTo({top:0,behavior:'auto'});
+    }
+  }
+});
+window.addEventListener('pageshow',()=>{
+  loadTodayOnOpen();
+  if(localStorage.getItem('myRetaJourneyHomeMode')==='1'){
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+});
 
 
 function commitCurrentEntry(){
-  const x=item();
+  let x=item();
   if(!x.date)x.date=today();
-
-  const byId=x.id?entries.findIndex(e=>e.id===x.id):-1;
-  const byDate=entries.findIndex(e=>e.date===x.date && e.id!==x.id);
-
-  if(byId>=0){
-    entries[byId]=x;
-    if(byDate>=0){
-      entries.splice(byDate,1);
-    }
-  }else if(byDate>=0){
-    x.id=entries[byDate].id;
-    entries[byDate]=x;
-    $('editingId').value=x.id;
-  }else{
-    entries.push(x);
-    $('editingId').value=x.id;
-  }
-
-  entries.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  save();
+  x=commitObjectToHistory(x);
+  if(!x)return null;
+  $('editingId').value=x.id;
+  entries=JSON.parse(localStorage.getItem(KEY)||'[]');
   clearDraft();
   populateForm(x);
+  render();
   return x;
 }
 
 $('saveClose').onclick=()=>{
   const x=commitCurrentEntry();
+  if(!x){toast('Nothing to save');return;}
+  localStorage.setItem('myRetaJourneyHomeMode','1');
   toast('Entry saved for '+x.date);
-  setTimeout(()=>{
-    try{window.close()}catch(e){}
-    if(!document.hidden) alert('Your entry has been saved. You can now close or swipe away My Reta Journey safely.');
-  },250);
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>profileUI(),150);
 };
 
 $('clearForm').onclick=()=>{
@@ -578,5 +613,9 @@ $('checkUpdate').onclick=async()=>{
 function updateConnectionStatus(){let s=$('connectionStatus');if(s)s.textContent=navigator.onLine?'Online':'Offline — app still available'}
 window.addEventListener('online',updateConnectionStatus);window.addEventListener('offline',updateConnectionStatus);updateConnectionStatus();
 
-setTimeout(()=>{loadTodayOnOpen();render();},300);
+setTimeout(()=>{
+  profileUI();
+  loadTodayOnOpen();
+  window.scrollTo({top:0,behavior:'auto'});
+},300);
 </script></body></html>

@@ -84,7 +84,7 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </section>
 
 <section id="entryCard" class="card">
-<h2 id="formTitle">New Daily Entry</h2><form id="form"><input type="hidden" id="editingId">
+<h2 id="formTitle">Daily Entry</h2><form id="form"><input type="hidden" id="editingId">
 <div class="grid"><div><label>Date</label><input id="date" type="date" required></div><div><label>Weight (kg)</label><input id="weight" type="number" step=".01"></div><div><label>Reta Time</label><input id="retaTime" type="time"></div><div><label>Reta Dose (mg)</label><input id="retaDose" type="number" step=".1"></div></div>
 
 <h3>Blood Pressure</h3>
@@ -96,15 +96,28 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 
 <h3>Fluids</h3>
 <div class="grid">
-<div><label>Water</label><div class="taps"><button type="button" class="tap" data-target="water" data-v="200">200</button><button type="button" class="tap" data-target="water" data-v="300">300</button><button type="button" class="tap" data-target="water" data-v="400">400</button><button type="button" class="tap" data-target="water" data-v="500">500</button><button type="button" class="secondary undo" data-target="water">Undo</button></div><input id="water"><div class="total" id="waterTotal">Total: 0 ml</div></div>
+<div><label>Water</label><div class="taps">
+<button type="button" class="tap" data-target="water" data-v="200">200</button>
+<button type="button" class="tap" data-target="water" data-v="300">300</button>
+<button type="button" class="tap" data-target="water" data-v="400">400</button>
+<button type="button" class="tap" data-target="water" data-v="500">500</button>
+<button type="button" class="secondary undo" data-target="water">Undo</button>
+</div><input id="water"><div class="total" id="waterTotal">Total: 0 ml</div></div>
 
-<div><label>Electrolytes</label><div class="taps"><button type="button" class="tap" data-target="electrolytes" data-v="200">200</button><button type="button" class="tap" data-target="electrolytes" data-v="300">300</button><button type="button" class="tap" data-target="electrolytes" data-v="400">400</button><button type="button" class="tap" data-target="electrolytes" data-v="500">500</button><button type="button" class="secondary undo" data-target="electrolytes">Undo</button></div><input id="electrolytes"><div class="total" id="electrolytesTotal">Total: 0 ml</div></div>
+<div><label>Electrolytes</label><div class="taps">
+<button type="button" class="tap" data-target="electrolytes" data-v="200">200</button>
+<button type="button" class="tap" data-target="electrolytes" data-v="300">300</button>
+<button type="button" class="tap" data-target="electrolytes" data-v="400">400</button>
+<button type="button" class="tap" data-target="electrolytes" data-v="500">500</button>
+<button type="button" class="secondary undo" data-target="electrolytes">Undo</button>
+</div><input id="electrolytes"><div class="total" id="electrolytesTotal">Total: 0 ml</div></div>
 
-<div><label>Protein</label><div class="taps"><button type="button" class="tap" data-target="protein" data-v="10">10 g</button><button type="button" class="tap" data-target="protein" data-v="20">20 g</button><button type="button" class="tap" data-target="protein" data-v="30">30 g</button><button type="button" class="secondary undo" data-target="protein">Undo</button></div><input id="protein"><div class="total" id="proteinTotal">Total: 0 g</div></div>
-
-<div><label>Juice</label><div class="taps"><button type="button" class="tap" data-target="juice" data-v="150">150</button><button type="button" class="tap" data-target="juice" data-v="200">200</button><button type="button" class="tap" data-target="juice" data-v="250">250</button><button type="button" class="secondary undo" data-target="juice">Undo</button></div><input id="juice"><div class="total" id="juiceTotal">Total: 0 ml</div></div>
-
-<div><label>Fizzy</label><div class="taps"><button type="button" class="tap" data-target="fizzy" data-v="150">150</button><button type="button" class="tap" data-target="fizzy" data-v="200">200</button><button type="button" class="tap" data-target="fizzy" data-v="250">250</button><button type="button" class="tap" data-target="fizzy" data-v="330">330</button><button type="button" class="secondary undo" data-target="fizzy">Undo</button></div><input id="fizzy"><div class="total" id="fizzyTotal">Total: 0 ml</div></div>
+<div><label>Protein</label><div class="taps">
+<button type="button" class="tap" data-target="protein" data-v="10">10 g</button>
+<button type="button" class="tap" data-target="protein" data-v="20">20 g</button>
+<button type="button" class="tap" data-target="protein" data-v="30">30 g</button>
+<button type="button" class="secondary undo" data-target="protein">Undo</button>
+</div><input id="protein"><div class="total" id="proteinTotal">Total: 0 g</div></div>
 
 <div class="full"><label>Beverages</label>
 <div class="taps">
@@ -112,26 +125,134 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <button type="button" class="categoryTap" data-target="beverages" data-v="Tea">Tea</button>
 <button type="button" class="categoryTap" data-target="beverages" data-v="Soup">Soup</button>
 <button type="button" class="categoryTap" data-target="beverages" data-v="Noodles">Noodles</button>
+<button type="button" class="categoryTap" data-target="beverages" data-v="Juice">Juice</button>
+<button type="button" class="categoryTap" data-target="beverages" data-v="Fizzy">Fizzy</button>
 <button type="button" class="secondary undo" data-target="beverages">Undo</button>
-</div><input id="beverages" placeholder="Tap items or edit manually"></div>
+</div>
+<input id="beverages" placeholder="Tap items or edit manually">
+</div>
 </div>
 
-<h3>Meals</h3><div class="grid"><div class="full"><label>Breakfast</label><textarea id="breakfast"></textarea></div><div class="full"><label>Lunch</label><textarea id="lunch"></textarea></div><div class="full"><label>Tea</label><textarea id="tea"></textarea></div></div>
+<h3>Meals</h3>
+<div class="grid">
+
+<div class="full"><label>Breakfast</label>
+<div class="taps">
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Cereal">Cereal</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Fruit">Fruit</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Egg">Egg</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Salad">Salad</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Rice">Rice</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Pizza">Pizza</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Bacon">Bacon</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Chicken">Chicken</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Steak">Steak</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Beef">Beef</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Lamb">Lamb</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Fish">Fish</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Pork">Pork</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Veges">Veges</button>
+<button type="button" class="categoryTap" data-target="breakfast" data-v="Other">Other</button>
+<button type="button" class="secondary undo" data-target="breakfast">Undo</button>
+</div><textarea id="breakfast"></textarea></div>
+
+<div class="full"><label>Lunch</label>
+<div class="taps">
+<button type="button" class="categoryTap" data-target="lunch" data-v="Fruit">Fruit</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Egg">Egg</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Rice">Rice</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Pizza">Pizza</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Bacon">Bacon</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Chicken">Chicken</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Beef">Beef</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Steak">Steak</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Lamb">Lamb</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Fish">Fish</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Pork">Pork</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Veges">Veges</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Potato">Potato</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Sweet Potato">Sweet Potato</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Salad">Salad</button>
+<button type="button" class="categoryTap" data-target="lunch" data-v="Other">Other</button>
+<button type="button" class="secondary undo" data-target="lunch">Undo</button>
+</div><textarea id="lunch"></textarea></div>
+
+<div class="full"><label>Tea</label>
+<div class="taps">
+<button type="button" class="categoryTap" data-target="tea" data-v="Fruit">Fruit</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Rice">Rice</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Egg">Egg</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Pizza">Pizza</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Bacon">Bacon</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Chicken">Chicken</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Beef">Beef</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Steak">Steak</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Lamb">Lamb</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Fish">Fish</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Pork">Pork</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Veges">Veges</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Potato">Potato</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Sweet Potato">Sweet Potato</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Salad">Salad</button>
+<button type="button" class="categoryTap" data-target="tea" data-v="Other">Other</button>
+<button type="button" class="secondary undo" data-target="tea">Undo</button>
+</div><textarea id="tea"></textarea></div>
+
+</div>
+
 <h3>Exercise</h3><div class="grid">
-<div><label>Walk</label><div class="taps"><button type="button" class="tap" data-target="walk" data-v="10">10 min</button><button type="button" class="tap" data-target="walk" data-v="20">20 min</button><button type="button" class="tap" data-target="walk" data-v="30">30 min</button><button type="button" class="tap" data-target="walk" data-v="40">40 min</button><button type="button" class="tap" data-target="walk" data-v="60">60 min</button><button type="button" class="secondary undo" data-target="walk">Undo</button></div><input id="walk"><div class="total" id="walkTotal">Total: 0 min</div></div>
-<div><label>Gym</label><input id="gym"></div><div class="full"><label>Other</label><input id="exerciseOther"></div></div>
+<div><label>Walk</label>
+<div class="taps">
+<button type="button" class="tap" data-target="walk" data-v="10">10 min</button>
+<button type="button" class="tap" data-target="walk" data-v="20">20 min</button>
+<button type="button" class="tap" data-target="walk" data-v="30">30 min</button>
+<button type="button" class="secondary undo" data-target="walk">Undo</button>
+</div><input id="walk"><div class="total" id="walkTotal">Total: 0 min</div></div>
+
+<div><label>Gym</label>
+<div class="taps">
+<button type="button" class="tap" data-target="gym" data-v="10">10 min</button>
+<button type="button" class="tap" data-target="gym" data-v="20">20 min</button>
+<button type="button" class="tap" data-target="gym" data-v="30">30 min</button>
+<button type="button" class="secondary undo" data-target="gym">Undo</button>
+</div><input id="gym"><div class="total" id="gymTotal">Total: 0 min</div></div>
+
+<div class="full"><label>Other</label><input id="exerciseOther"></div>
+</div>
 
 <h3>Supplements</h3><div class="grid">
-<div><label>Magnesium Glycinate</label><div class="taps"><button type="button" class="tap" data-target="magnesium" data-v="400">400 mg</button><button type="button" class="tap" data-target="magnesium" data-v="500">500 mg</button><button type="button" class="secondary undo" data-target="magnesium">Undo</button></div><input id="magnesium"></div>
-<div><label>My Supplement Buttons</label><div id="customSupplementButtons" class="taps"></div><div class="actions"><input id="newSupplement" placeholder="e.g. Vitamin D 1000 IU"><button type="button" class="secondary" id="addSupplement">Add Button</button></div></div>
-<div class="full"><label>Other / Selected Supplements</label><input id="supplementOther"></div></div>
+<div><label>Magnesium Glycinate</label>
+<div class="taps">
+<button type="button" class="tap" data-target="magnesium" data-v="400">400 mg</button>
+<button type="button" class="tap" data-target="magnesium" data-v="500">500 mg</button>
+<button type="button" class="secondary undo" data-target="magnesium">Undo</button>
+</div><input id="magnesium"></div>
+
+<div><label>Other</label>
+<div class="taps">
+<button type="button" class="categoryTap" data-target="supplementOther" data-v="Other">Other</button>
+<button type="button" class="secondary undo" data-target="supplementOther">Undo</button>
+</div><input id="supplementOther" placeholder="Tap Other or type supplement details"></div>
+</div>
 
 <h3>Notes</h3><div class="grid">
-<div><label>Energy</label><div class="choice"><input type="radio" name="energy" id="eg" value="Good"><label for="eg">Good</label><input type="radio" name="energy" id="el" value="Low"><label for="el">Low</label><input type="radio" name="energy" id="eh" value="High"><label for="eh">High</label></div></div>
-<div><label>Appetite</label><div class="choice"><input type="radio" name="appetite" id="ar" value="Reduced"><label for="ar">Reduced</label><input type="radio" name="appetite" id="an" value="Normal"><label for="an">Normal</label></div></div>
-<div class="full"><label>Symptoms</label><textarea id="symptoms"></textarea></div><div class="full"><label>Observations</label><textarea id="observations"></textarea></div><div class="full"><label>Other</label><textarea id="notesOther"></textarea></div>
+<div><label>Energy</label><div class="choice">
+<input type="radio" name="energy" id="eg" value="Good"><label for="eg">Good</label>
+<input type="radio" name="energy" id="el" value="Low"><label for="el">Low</label>
+<input type="radio" name="energy" id="eh" value="High"><label for="eh">High</label>
+</div></div>
+<div><label>Appetite</label><div class="choice">
+<input type="radio" name="appetite" id="ar" value="Reduced"><label for="ar">Reduced</label>
+<input type="radio" name="appetite" id="an" value="Normal"><label for="an">Normal</label>
+</div></div>
+<div class="full"><label>Observations</label><textarea id="observations"></textarea></div>
 </div>
-<div class="actions"><button class="primary" type="submit" id="saveBtn">Save Entry</button><button class="secondary" type="button" id="saveClose">SAVE & CLOSE</button><button class="secondary" type="button" id="clearForm">Clear</button><button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button></div><div class="muted">Your current entry is also protected automatically as a draft whenever you type, switch apps, or close the app.</div>
+<div class="actions">
+<button class="primary" type="button" id="saveClose">SAVE & CLOSE</button>
+<button class="secondary" type="button" id="clearForm">Clear</button>
+<button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
+</div>
+<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE & CLOSE commits the entry to History before you leave.</div>
 </form>
 </section>
 
@@ -144,8 +265,25 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </main><div id="toast"></div>
 
 <script>
-const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.1';
+const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2';
 let entries=JSON.parse(localStorage.getItem(KEY)||'[]'),profile=JSON.parse(localStorage.getItem(PROFILE)||'null'),deleted=null;
+
+function migrateLegacyEntries(){
+  let changed=false;
+  entries=entries.map(e=>{
+    let bev=String(e.beverages||'').trim();
+    if(e.juice){bev+=(bev?', ':'')+'Juice '+e.juice; delete e.juice; changed=true;}
+    if(e.fizzy){bev+=(bev?', ':'')+'Fizzy '+e.fizzy; delete e.fizzy; changed=true;}
+    if(e.milk){delete e.milk; changed=true;}
+    if(e.symptoms!==undefined){delete e.symptoms; changed=true;}
+    if(e.notesOther!==undefined){delete e.notesOther; changed=true;}
+    e.beverages=bev;
+    return e;
+  });
+  if(changed)localStorage.setItem(KEY,JSON.stringify(entries));
+}
+migrateLegacyEntries();
+
 const $=id=>document.getElementById(id), val=id=>$(id).value.trim();
 function today(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
 function nums(s){return (String(s||'').match(/\d+(\.\d+)?/g)||[]).map(Number)}
@@ -171,21 +309,81 @@ $('date').value=today();
 document.querySelectorAll('.tap').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target);x.value=x.value.trim()?x.value.trim()+', '+b.dataset.v:b.dataset.v;updateTotals();saveDraft()});
 document.querySelectorAll('.undo').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target),a=x.value.split(',').map(s=>s.trim()).filter(Boolean);a.pop();x.value=a.join(', ');updateTotals();saveDraft()});
 document.querySelectorAll('.categoryTap').forEach(b=>b.onclick=()=>{let x=$(b.dataset.target);x.value=x.value.trim()?x.value.trim()+', '+b.dataset.v:b.dataset.v;saveDraft()});
-['water','electrolytes','protein','juice','fizzy','walk'].forEach(id=>$(id).oninput=()=>{updateTotals();saveDraft();});
+['water','electrolytes','protein','walk','gym'].forEach(id=>$(id).oninput=()=>{updateTotals();saveDraft();});
 function updateTotals(){
 $('waterTotal').textContent='Total: '+sum(val('water'))+' ml';
 $('electrolytesTotal').textContent='Total: '+sum(val('electrolytes'))+' ml';
 $('proteinTotal').textContent='Total: '+sum(val('protein'))+' g';
-$('juiceTotal').textContent='Total: '+sum(val('juice'))+' ml';
-$('fizzyTotal').textContent='Total: '+sum(val('fizzy'))+' ml';
 $('walkTotal').textContent='Total: '+sum(val('walk'))+' min';
+$('gymTotal').textContent='Total: '+sum(val('gym'))+' min';
 }
 
-function suppButtons(){let a=JSON.parse(localStorage.getItem(SUPPS)||'[]');$('customSupplementButtons').innerHTML=a.map((s,i)=>`<button type="button" class="tap" onclick="addCustom(${i})">${esc(s)}</button>`).join('');window._supps=a}
-$('addSupplement').onclick=()=>{let s=val('newSupplement');if(!s)return;let a=JSON.parse(localStorage.getItem(SUPPS)||'[]');a.push(s);localStorage.setItem(SUPPS,JSON.stringify(a));$('newSupplement').value='';suppButtons()}
-window.addCustom=i=>{let s=window._supps[i],x=$('supplementOther');x.value=x.value?x.value+', '+s:s}
 
-function item(){return{id:Number(val('editingId'))||Date.now(),date:val('date'),weight:val('weight'),retaTime:val('retaTime'),retaDose:val('retaDose'),bpSys:val('bpSys'),bpDia:val('bpDia'),bpPul:val('bpPul'),water:val('water'),electrolytes:val('electrolytes'),protein:val('protein'),juice:val('juice'),fizzy:val('fizzy'),beverages:val('beverages'),breakfast:val('breakfast'),lunch:val('lunch'),tea:val('tea'),walk:val('walk'),gym:val('gym'),exerciseOther:val('exerciseOther'),magnesium:val('magnesium'),supplementOther:val('supplementOther'),energy:radio('energy'),appetite:radio('appetite'),symptoms:val('symptoms'),observations:val('observations'),notesOther:val('notesOther')}}
+function item(){return{id:Number(val('editingId'))||Date.now(),date:val('date'),weight:val('weight'),retaTime:val('retaTime'),retaDose:val('retaDose'),bpSys:val('bpSys'),bpDia:val('bpDia'),bpPul:val('bpPul'),water:val('water'),electrolytes:val('electrolytes'),protein:val('protein'),beverages:val('beverages'),breakfast:val('breakfast'),lunch:val('lunch'),tea:val('tea'),walk:val('walk'),gym:val('gym'),exerciseOther:val('exerciseOther'),magnesium:val('magnesium'),supplementOther:val('supplementOther'),energy:radio('energy'),appetite:radio('appetite'),observations:val('observations')}}
+
+
+const FORM_FIELDS=['weight','retaTime','retaDose','bpSys','bpDia','bpPul','water','electrolytes','protein','beverages','breakfast','lunch','tea','walk','gym','exerciseOther','magnesium','supplementOther','observations'];
+
+function clearFormFields(keepDate=true){
+  const d=val('date')||today();
+  FORM_FIELDS.forEach(id=>{if($(id))$(id).value=''});
+  document.querySelectorAll('input[name="energy"],input[name="appetite"]').forEach(x=>x.checked=false);
+  $('editingId').value='';
+  if(keepDate)$('date').value=d;
+  $('formTitle').textContent='Daily Entry';
+  $('cancelEdit').classList.add('hidden');
+  updateTotals();
+}
+
+function populateForm(e){
+  if(!e){clearFormFields(true);return}
+  Object.keys(e).forEach(k=>{if($(k))$(k).value=e[k]??''});
+  $('editingId').value=e.id;
+  setRadio('energy',e.energy||'');
+  setRadio('appetite',e.appetite||'');
+  $('formTitle').textContent='Daily Entry — '+e.date;
+  $('cancelEdit').classList.remove('hidden');
+  updateTotals();
+}
+
+function loadDateEntry(dateStr){
+  if(!dateStr)return;
+  const e=entries.find(x=>x.date===dateStr);
+  if(e) populateForm(e);
+  else {clearFormFields(true);$('date').value=dateStr;}
+  saveDraft();
+}
+
+function loadTodayOnOpen(){
+  const t=today();
+  $('date').value=t;
+  const todays=entries.find(e=>e.date===t);
+  if(todays)populateForm(todays);
+  else {
+    clearFormFields(true);
+    $('date').value=t;
+    const raw=localStorage.getItem(DRAFT);
+    if(raw){
+      try{
+        const d=JSON.parse(raw);
+        if(d.date===t)restoreDraft();
+      }catch(e){}
+    }
+  }
+}
+
+function ensureCurrentDay(){
+  const t=today();
+  if(!val('editingId') && val('date')!==t){
+    const raw=localStorage.getItem(DRAFT);
+    let hasUnsaved=false;
+    try{
+      const d=raw?JSON.parse(raw):null;
+      hasUnsaved=d&&d.date===val('date')&&Object.entries(d).some(([k,v])=>!['id','_savedAt','date'].includes(k)&&String(v||'').trim());
+    }catch(e){}
+    if(!hasUnsaved)loadDateEntry(t);
+  }
+}
 
 function draftData(){
   const x=item(); x.id=val('editingId')||''; x._savedAt=new Date().toISOString(); return x;
@@ -204,19 +402,18 @@ function restoreDraft(){
     if(!hasContent)return;
     Object.keys(d).forEach(k=>{if($(k))$(k).value=d[k]??''});
     setRadio('energy',d.energy||''); setRadio('appetite',d.appetite||'');
-    if(d.id){$('editingId').value=d.id;$('formTitle').textContent='Edit Entry';$('saveBtn').textContent='Save Edits';$('cancelEdit').classList.remove('hidden')}
+    if(d.id){$('editingId').value=d.id;$('formTitle').textContent='Daily Entry — '+(d.date||'');$('cancelEdit').classList.remove('hidden')}
     updateTotals();
     toast('Your autosaved draft was restored');
   }catch(e){}
 }
+$('date').addEventListener('change',()=>loadDateEntry(val('date')));
 document.querySelectorAll('#form input,#form textarea,#form select').forEach(el=>{
   el.addEventListener('input',saveDraft); el.addEventListener('change',saveDraft);
 });
 window.addEventListener('pagehide',saveDraft);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveDraft()});
 
-$('form').onsubmit=e=>{e.preventDefault();let x=item(),editing=!!val('editingId');if(editing){let i=entries.findIndex(e=>e.id===x.id);if(i>=0)entries[i]=x}else entries.push(x);entries.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);save();clearDraft();clearEntry();toast(editing?'Edits saved':'Entry saved')}
-function clearEntry(){let d=val('date')||today();$('form').reset();$('date').value=d;$('editingId').value='';$('formTitle').textContent='New Daily Entry';$('saveBtn').textContent='Save Entry';$('cancelEdit').classList.add('hidden');updateTotals();window.scrollTo({top:0,behavior:'smooth'})}
 $('clearForm').onclick=()=>{let d=val('date');$('form').reset();$('date').value=d;clearDraft();updateTotals();saveDraft()}
 $('cancelEdit').onclick=clearEntry;
 $('saveClose').onclick=()=>{
@@ -228,7 +425,58 @@ $('saveClose').onclick=()=>{
   },250);
 };
 
-window.editEntry=id=>{let e=entries.find(x=>x.id===id);if(!e)return;Object.keys(e).forEach(k=>{if($(k))$(k).value=e[k]??''});setRadio('energy',e.energy);setRadio('appetite',e.appetite);$('editingId').value=e.id;$('formTitle').textContent='Edit Entry';$('saveBtn').textContent='Save Edits';$('cancelEdit').classList.remove('hidden');updateTotals();scrollToForm()}
+
+function commitCurrentEntry(){
+  const x=item();
+  if(!x.date)x.date=today();
+
+  const byId=x.id?entries.findIndex(e=>e.id===x.id):-1;
+  const byDate=entries.findIndex(e=>e.date===x.date && e.id!==x.id);
+
+  if(byId>=0){
+    entries[byId]=x;
+    if(byDate>=0){
+      entries.splice(byDate,1);
+    }
+  }else if(byDate>=0){
+    x.id=entries[byDate].id;
+    entries[byDate]=x;
+    $('editingId').value=x.id;
+  }else{
+    entries.push(x);
+    $('editingId').value=x.id;
+  }
+
+  entries.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  save();
+  clearDraft();
+  populateForm(x);
+  return x;
+}
+
+$('saveClose').onclick=()=>{
+  const x=commitCurrentEntry();
+  toast('Entry saved for '+x.date);
+  setTimeout(()=>{
+    try{window.close()}catch(e){}
+    if(!document.hidden) alert('Your entry has been saved. You can now close or swipe away My Reta Journey safely.');
+  },250);
+};
+
+$('clearForm').onclick=()=>{
+  clearDraft();
+  const d=val('date')||today();
+  clearFormFields(true);
+  $('date').value=d;
+  saveDraft();
+};
+
+$('cancelEdit').onclick=()=>{
+  clearDraft();
+  loadDateEntry(today());
+};
+
+window.editEntry=id=>{let e=entries.find(x=>x.id===id);if(!e)return;populateForm(e);$('date').value=e.date;scrollToForm()}
 window.delEntry=id=>{let i=entries.findIndex(x=>x.id===id);if(i<0)return;if(confirm('Delete this entry?')){deleted=[entries[i]];entries.splice(i,1);save();toast('Deleted — you can restore it')}}
 $('restoreDeleted').onclick=()=>{if(!deleted)return alert('Nothing to restore.');entries.push(...deleted);deleted=null;save();toast('Restored')}
 $('deleteAll').onclick=()=>{if(confirm('Delete ALL entries?')){deleted=[...entries];entries=[];save();toast('All deleted — Restore Last Deleted is available')}}
@@ -243,19 +491,20 @@ function range(n){let c=new Date();c.setDate(c.getDate()-n+1);c.setHours(0,0,0,0
 window.showProgress=(n,label)=>{let a=range(n).sort((x,y)=>x.date.localeCompare(y.date)),w=a.filter(e=>e.weight).map(e=>Number(e.weight)),chg=w.length>1?w.at(-1)-w[0]:null,days=a.length||1;
 let energy={Good:0,Low:0,High:0},app={Reduced:0,Normal:0};a.forEach(e=>{if(energy[e.energy]!=null)energy[e.energy]++;if(app[e.appetite]!=null)app[e.appetite]++});
 let bp=a.filter(e=>e.bpSys&&e.bpDia);let avgSys=bp.length?Math.round(bp.reduce((s,e)=>s+Number(e.bpSys),0)/bp.length):null,avgDia=bp.length?Math.round(bp.reduce((s,e)=>s+Number(e.bpDia),0)/bp.length):null,avgPul=bp.filter(e=>e.bpPul).length?Math.round(bp.filter(e=>e.bpPul).reduce((s,e)=>s+Number(e.bpPul),0)/bp.filter(e=>e.bpPul).length):null;
-$('progress').innerHTML=`<h3>${label} Progress</h3><div class="stats"><div class="stat"><small>Weight Change</small><b>${chg==null?'—':(chg>0?'+':'')+chg.toFixed(2)+' kg'}</b></div><div class="stat"><small>Avg Water / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.water),0)/days)} ml</b></div><div class="stat"><small>Avg Protein / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.protein),0)/days)} g</b></div><div class="stat"><small>Walk Total</small><b>${a.reduce((s,e)=>s+sum(e.walk),0)} min</b></div></div><p class="muted"><strong>Blood pressure average:</strong> ${avgSys??'—'}/${avgDia??'—'} &nbsp; Pulse ${avgPul??'—'} &nbsp; | &nbsp; Juice ${a.reduce((s,e)=>s+sum(e.juice),0)} ml &nbsp; | &nbsp; Fizzy ${a.reduce((s,e)=>s+sum(e.fizzy),0)} ml<br>Reta doses: ${a.filter(e=>e.retaDose).length} &nbsp; | &nbsp; Energy — Good ${energy.Good}, Low ${energy.Low}, High ${energy.High} &nbsp; | &nbsp; Appetite — Reduced ${app.Reduced}, Normal ${app.Normal}</p>`;drawChart(a)}
+$('progress').innerHTML=`<h3>${label} Progress</h3><div class="stats"><div class="stat"><small>Weight Change</small><b>${chg==null?'—':(chg>0?'+':'')+chg.toFixed(2)+' kg'}</b></div><div class="stat"><small>Avg Water / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.water),0)/days)} ml</b></div><div class="stat"><small>Avg Protein / Entry</small><b>${Math.round(a.reduce((s,e)=>s+sum(e.protein),0)/days)} g</b></div><div class="stat"><small>Walk Total</small><b>${a.reduce((s,e)=>s+sum(e.walk),0)} min</b></div></div><p class="muted"><strong>Blood pressure average:</strong> ${avgSys??'—'}/${avgDia??'—'} &nbsp; Pulse ${avgPul??'—'} &nbsp; | &nbsp; Gym ${a.reduce((s,e)=>s+sum(e.gym),0)} min<br>Reta doses: ${a.filter(e=>e.retaDose).length} &nbsp; | &nbsp; Energy — Good ${energy.Good}, Low ${energy.Low}, High ${energy.High} &nbsp; | &nbsp; Appetite — Reduced ${app.Reduced}, Normal ${app.Normal}</p>`;drawChart(a)}
 function drawChart(a=entries){let c=$('chart'),ctx=c.getContext('2d'),d=[...a].filter(e=>e.weight).sort((x,y)=>x.date.localeCompare(y.date));ctx.clearRect(0,0,c.width,c.height);if(d.length<1){ctx.fillText('Add weight entries to display your graph.',30,40);return}let ys=d.map(e=>Number(e.weight)),min=Math.min(...ys)-1,max=Math.max(...ys)+1,pad=40;ctx.beginPath();d.forEach((e,i)=>{let x=pad+(i*(c.width-2*pad)/Math.max(1,d.length-1)),y=c.height-pad-((Number(e.weight)-min)/(max-min))*(c.height-2*pad);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillText(max.toFixed(1)+' kg',5,pad);ctx.fillText(min.toFixed(1)+' kg',5,c.height-pad)}
 
 function filtered(){let a=[...entries],f=val('filter'),q=val('search').toLowerCase();if(f!=='all')a=range(Number(f));if(q)a=a.filter(e=>Object.values(e).join(' ').toLowerCase().includes(q));return a}
 $('filter').onchange=render;$('search').oninput=render;$('toggleHistory').onclick=()=>{$('historyWrap').classList.toggle('hidden');$('toggleHistory').textContent=$('historyWrap').classList.contains('hidden')?'Expand':'Collapse'}
-function render(){dashboard();let a=filtered(),h=$('history');h.innerHTML=a.length?a.map(e=>`<div class="entry" id="en${e.id}"><div class="entryHead" onclick="document.getElementById('en${e.id}').classList.toggle('open')"><strong>${esc(e.date)} | ${e.weight?esc(e.weight)+' kg':'No weight'} | ${e.retaDose?'Reta '+esc(e.retaDose)+' mg':'No Reta'}</strong><span>▼</span></div><div class="entryBody"><div class="entryGrid"><div class="section">Blood Pressure</div><div>SYS: ${esc(e.bpSys)||'—'}</div><div>DIA: ${esc(e.bpDia)||'—'}</div><div>PUL: ${esc(e.bpPul)||'—'}</div><div class="section">Fluids</div><div>Water: ${esc(e.water)||'—'}</div><div>Electrolytes: ${esc(e.electrolytes)||'—'}</div><div>Protein: ${esc(e.protein)||'—'}</div><div>Juice: ${esc(e.juice)||'—'}</div><div>Fizzy: ${esc(e.fizzy)||'—'}</div><div>Beverages: ${esc(e.beverages)||'—'}</div><div class="section">Meals</div><div>Breakfast: ${esc(e.breakfast)||'—'}</div><div>Lunch: ${esc(e.lunch)||'—'}</div><div>Tea: ${esc(e.tea)||'—'}</div><div class="section">Exercise & Supplements</div><div>Walk: ${esc(e.walk)||'—'}</div><div>Gym: ${esc(e.gym)||'—'}</div><div>Magnesium: ${esc(e.magnesium)||'—'}</div><div>Other supplements: ${esc(e.supplementOther)||'—'}</div><div class="section">Notes</div><div>Energy: ${esc(e.energy)||'—'}</div><div>Appetite: ${esc(e.appetite)||'—'}</div><div>Symptoms: ${esc(e.symptoms)||'—'}</div><div>Observations: ${esc(e.observations)||'—'}</div></div><div class="actions"><button class="secondary" onclick="editEntry(${e.id})">EDIT</button><button class="danger" onclick="delEntry(${e.id})">DELETE</button></div></div></div>`).join(''):'<p class="muted">No entries found.</p>';drawChart(entries);$('backupStatus').textContent='Last backup: '+(localStorage.getItem(BACKUP)||'Never')}
+function render(){dashboard();let a=filtered(),h=$('history');h.innerHTML=a.length?a.map(e=>`<div class="entry" id="en${e.id}"><div class="entryHead" onclick="document.getElementById('en${e.id}').classList.toggle('open')"><strong>${esc(e.date)} | ${e.weight?esc(e.weight)+' kg':'No weight'} | ${e.retaDose?'Reta '+esc(e.retaDose)+' mg':'No Reta'}</strong><span>▼</span></div><div class="entryBody"><div class="entryGrid"><div class="section">Blood Pressure</div><div>SYS: ${esc(e.bpSys)||'—'}</div><div>DIA: ${esc(e.bpDia)||'—'}</div><div>PUL: ${esc(e.bpPul)||'—'}</div><div class="section">Fluids</div><div>Water: ${esc(e.water)||'—'}</div><div>Electrolytes: ${esc(e.electrolytes)||'—'}</div><div>Protein: ${esc(e.protein)||'—'}</div><div>Beverages: ${esc(e.beverages)||'—'}</div><div class="section">Meals</div><div>Breakfast: ${esc(e.breakfast)||'—'}</div><div>Lunch: ${esc(e.lunch)||'—'}</div><div>Tea: ${esc(e.tea)||'—'}</div><div class="section">Exercise & Supplements</div><div>Walk: ${esc(e.walk)||'—'}</div><div>Gym: ${esc(e.gym)||'—'}</div><div>Magnesium: ${esc(e.magnesium)||'—'}</div><div>Other supplement: ${esc(e.supplementOther)||'—'}</div><div class="section">Notes</div><div>Energy: ${esc(e.energy)||'—'}</div><div>Appetite: ${esc(e.appetite)||'—'}</div><div>Observations: ${esc(e.observations)||'—'}</div></div><div class="actions"><button class="secondary" onclick="editEntry(${e.id})">EDIT</button><button class="danger" onclick="delEntry(${e.id})">DELETE</button></div></div></div>`).join(''):'<p class="muted">No entries found.</p>';drawChart(entries);$('backupStatus').textContent='Last backup: '+(localStorage.getItem(BACKUP)||'Never')}
 
 function download(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 $('backup').onclick=()=>{download(new Blob([JSON.stringify({profile,entries,supplements:JSON.parse(localStorage.getItem(SUPPS)||'[]')},null,2)],{type:'application/json'}),'my-reta-journey-backup.json');let d=new Date().toLocaleString();localStorage.setItem(BACKUP,d);render()}
-$('restore').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(confirm('Replace current profile and data with this backup?')){profile=x.profile||profile;entries=x.entries||[];localStorage.setItem(PROFILE,JSON.stringify(profile));localStorage.setItem(KEY,JSON.stringify(entries));if(x.supplements)localStorage.setItem(SUPPS,JSON.stringify(x.supplements));profileUI();suppButtons();render()}}catch{alert('Could not read backup.')}e.target.value=''}
-$('csv').onclick=()=>{let cols=['date','weight','retaTime','retaDose','bpSys','bpDia','bpPul','water','electrolytes','protein','juice','fizzy','beverages','breakfast','lunch','tea','walk','gym','exerciseOther','magnesium','supplementOther','energy','appetite','symptoms','observations','notesOther'],q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',csv=[cols.join(','),...entries.map(e=>cols.map(c=>q(e[c])).join(','))].join('\n');download(new Blob([csv],{type:'text/csv'}),'my-reta-journey.csv')}
+$('restore').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(confirm('Replace current profile and data with this backup?')){profile=x.profile||profile;entries=x.entries||[];localStorage.setItem(PROFILE,JSON.stringify(profile));localStorage.setItem(KEY,JSON.stringify(entries));if(x.supplements)localStorage.setItem(SUPPS,JSON.stringify(x.supplements));profileUI();render()}}catch{alert('Could not read backup.')}e.target.value=''}
+$('csv').onclick=()=>{let cols=['date','weight','retaTime','retaDose','bpSys','bpDia','bpPul','water','electrolytes','protein','beverages','breakfast','lunch','tea','walk','gym','exerciseOther','magnesium','supplementOther','energy','appetite','observations'],q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',csv=[cols.join(','),...entries.map(e=>cols.map(c=>q(e[c])).join(','))].join('\n');download(new Blob([csv],{type:'text/csv'}),'my-reta-journey.csv')}
 
-profileUI();suppButtons();updateTotals();render();
+profileUI();updateTotals();render();
+setInterval(ensureCurrentDay,60000);
 
 
 let swRegistration=null, deferredInstallPrompt=null;
@@ -304,5 +553,5 @@ $('checkUpdate').onclick=async()=>{
 function updateConnectionStatus(){let s=$('connectionStatus');if(s)s.textContent=navigator.onLine?'Online':'Offline — app still available'}
 window.addEventListener('online',updateConnectionStatus);window.addEventListener('offline',updateConnectionStatus);updateConnectionStatus();
 
-setTimeout(restoreDraft,300);
+setTimeout(()=>{loadTodayOnOpen();render();},300);
 </script></body></html>

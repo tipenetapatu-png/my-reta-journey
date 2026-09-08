@@ -2,7 +2,7 @@
   "id": "./",
   "name": "My Reta Journey",
   "short_name": "MRJ",
-  "description": "A private one-person progress tracker with autosave, blood pressure, intake, exercise and progress history.",
+  "description": "A private one-person daily tracker with autosave, blood pressure, fluids, meals, exercise, supplements and progress history.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

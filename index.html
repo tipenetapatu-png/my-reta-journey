@@ -248,11 +248,11 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 <div class="full"><label>Observations</label><textarea id="observations"></textarea></div>
 </div>
 <div class="actions">
-<button class="primary" type="button" id="saveClose">SAVE / CLOSE</button>
+<button class="primary" type="button" id="saveClose">SAVE</button>
 <button class="secondary" type="button" id="clearForm">Clear</button>
 <button class="secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
 </div>
-<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE / CLOSE commits the entry to History and returns you to your profile dashboard.</div>
+<div class="muted">Your current entry is protected automatically as a draft while you type. SAVE commits the entry to History and returns you to your profile dashboard.</div>
 </form>
 </section>
 
@@ -265,7 +265,9 @@ canvas{width:100%;max-height:300px;border:1px solid var(--line);border-radius:10
 </main><div id="toast"></div>
 
 <script>
-const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.3';
+try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
+
+const KEY='myRetaJourneyV6',PROFILE='myRetaJourneyProfileV6',BACKUP='myRetaJourneyLastBackup',SUPPS='myRetaJourneySuppButtons',DRAFT='myRetaJourneyDraftV71',APP_VERSION='7.2.5';
 let entries=JSON.parse(localStorage.getItem(KEY)||'[]'),profile=JSON.parse(localStorage.getItem(PROFILE)||'null'),deleted=null;
 
 function migrateLegacyEntries(){
@@ -457,22 +459,25 @@ document.querySelectorAll('#form input,#form textarea,#form select').forEach(el=
   el.addEventListener('focus',()=>localStorage.removeItem('myRetaJourneyHomeMode'));
   el.addEventListener('input',saveDraft); el.addEventListener('change',saveDraft);
 });
-window.addEventListener('pagehide',saveDraft);
+window.addEventListener('pagehide',protectWorkOnExit);
+window.addEventListener('beforeunload',protectWorkOnExit);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
-    saveDraft();
+    protectWorkOnExit();
   }else{
+    entries=JSON.parse(localStorage.getItem(KEY)||'[]');
+    profileUI();
     loadTodayOnOpen();
-    if(localStorage.getItem('myRetaJourneyHomeMode')==='1'){
-      window.scrollTo({top:0,behavior:'auto'});
-    }
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),100);
   }
 });
 window.addEventListener('pageshow',()=>{
+  entries=JSON.parse(localStorage.getItem(KEY)||'[]');
+  profileUI();
   loadTodayOnOpen();
-  if(localStorage.getItem('myRetaJourneyHomeMode')==='1'){
-    window.scrollTo({top:0,behavior:'auto'});
-  }
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),100);
 });
 
 
@@ -493,7 +498,7 @@ $('saveClose').onclick=()=>{
   const x=commitCurrentEntry();
   if(!x){toast('Nothing to save');return;}
   localStorage.setItem('myRetaJourneyHomeMode','1');
-  toast('Entry saved for '+x.date+' — safe to close');
+  toast('Entry saved for '+x.date);
   window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>profileUI(),150);
 };
@@ -511,7 +516,16 @@ $('cancelEdit').onclick=()=>{
   loadDateEntry(today());
 };
 
-window.editEntry=id=>{let e=entries.find(x=>x.id===id);if(!e)return;populateForm(e);$('date').value=e.date;scrollToForm()}
+window.editEntry=id=>{
+  const e=entries.find(x=>Number(x.id)===Number(id));
+  if(!e){toast('Entry not found');return;}
+  localStorage.removeItem('myRetaJourneyHomeMode');
+  clearDraft();
+  $('date').value=e.date;
+  populateForm(e);
+  saveDraft();
+  scrollToForm();
+}
 window.delEntry=id=>{let i=entries.findIndex(x=>x.id===id);if(i<0)return;if(confirm('Delete this entry?')){deleted=[entries[i]];entries.splice(i,1);save();toast('Deleted — you can restore it')}}
 $('restoreDeleted').onclick=()=>{if(!deleted)return alert('Nothing to restore.');entries.push(...deleted);deleted=null;save();toast('Restored')}
 $('deleteAll').onclick=()=>{if(confirm('Delete ALL entries?')){deleted=[...entries];entries=[];save();toast('All deleted — Restore Last Deleted is available')}}
@@ -556,6 +570,18 @@ $('iosInstallHelp').onclick=()=>showModal('Install My Reta Journey on iPhone',`<
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;let b=$('installApp');if(b)b.classList.remove('hidden')});
 $('installApp')?.addEventListener('click',async()=>{if(!deferredInstallPrompt){if(isIOS())$('iosInstallHelp').click();else alert('Use your browser menu → Install app / Add to Home screen.');return;}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installApp').classList.add('hidden')});
 
+
+
+function protectWorkOnExit(){
+  try{
+    saveDraft();
+    const x=item();
+    if(hasMeaningfulData(x)){
+      commitObjectToHistory(x);
+      entries=JSON.parse(localStorage.getItem(KEY)||'[]');
+    }
+  }catch(err){console.error('Could not protect current work on exit',err);}
+}
 
 function protectCurrentEntryBeforeUpdate(){
   saveDraft();
@@ -616,6 +642,7 @@ window.addEventListener('online',updateConnectionStatus);window.addEventListener
 setTimeout(()=>{
   profileUI();
   loadTodayOnOpen();
-  window.scrollTo({top:0,behavior:'auto'});
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),100);
 },300);
 </script></body></html>
